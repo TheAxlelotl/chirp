@@ -57,7 +57,7 @@ const PostView = (props: PostWithUser) => {
             {` · ${dayjs(post.createdAt).fromNow()}`}
           </span>
         </div>
-        <span>{post.content}</span>
+        <span className="text-2xl">{post.content}</span>
       </div>
     </div>
   );
@@ -68,7 +68,7 @@ const Feed = () => {
 
   if (postsLoading) return <LoadingPage />;
 
-  if (!data) return <div>Something went wrong.</div>
+  if (!data) return <div>Something went wrong.</div>;
 
   return (
     <div className="flex flex-col">
@@ -101,9 +101,9 @@ const Home: NextPage = () => {
             <div className="border-b border-slate-400 p-4">
               <CreatePostWizard />
             </div>
-          </div>
 
-          <Feed />
+            <Feed />
+          </div>
         </SignedIn>
 
         <SignedOut>
