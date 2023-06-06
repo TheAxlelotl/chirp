@@ -2,6 +2,7 @@ import { SignInButton, SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 
 import Head from "next/head";
 import Image from "next/image";
+import { LoadingPage } from "~/components/loading";
 import type { NextPage } from "next";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
@@ -62,12 +63,30 @@ const PostView = (props: PostWithUser) => {
   );
 };
 
+const Feed = () => {
+  const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
+
+  if (postsLoading) return <LoadingPage />;
+
+  if (!data) return <div>Something went wrong.</div>
+
+  return (
+    <div className="flex flex-col">
+      {[...data, ...data]?.map((fullPost) => (
+        <PostView {...fullPost} key={fullPost.post.id} />
+      ))}
+    </div>
+  );
+};
+
 const Home: NextPage = () => {
-  const { data, isLoading } = api.posts.getAll.useQuery();
+  const { isLoaded: userLoaded } = useUser();
 
-  if (isLoading) return <div>Loading...</div>;
+  // Start fetching asap
+  api.posts.getAll.useQuery();
 
-  if (!data) return <div>Something went wrong.</div>;
+  // Return empty div if user isn't loaded yet
+  if (!userLoaded) return <div></div>;
 
   return (
     <>
@@ -82,12 +101,9 @@ const Home: NextPage = () => {
             <div className="border-b border-slate-400 p-4">
               <CreatePostWizard />
             </div>
-            <div className="flex flex-col">
-              {[...data, ...data]?.map((fullPost) => (
-                <PostView {...fullPost} key={fullPost.post.id} />
-              ))}
-            </div>
           </div>
+
+          <Feed />
         </SignedIn>
 
         <SignedOut>
