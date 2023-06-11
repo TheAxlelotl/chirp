@@ -1,5 +1,5 @@
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
-import { SignInButton, SignedIn, SignedOut, useUser } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 
 import Image from "next/image";
 import type { NextPage } from "next";
@@ -34,7 +34,8 @@ const CreatePostWizard = () => {
   if (!user) return null;
 
   return (
-    <div className="flex gap-3">
+    <div className="flex w-full gap-3">
+      <SignOutButton />
       <Image
         src={user.profileImageUrl}
         alt="Profile image"
@@ -88,7 +89,7 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
-  const { isLoaded: userLoaded } = useUser();
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Start fetching asap
   api.posts.getAll.useQuery();
@@ -99,17 +100,14 @@ const Home: NextPage = () => {
   return (
     <>
       <PageLayout>
-        <SignedOut>
-          <div className="flex justify-center">
-            <SignInButton />
-          </div>
-        </SignedOut>
-
-        <SignedIn>
-          <div className="border-b border-slate-400 p-4">
-            <CreatePostWizard />
-          </div>
-        </SignedIn>
+        <div className="flex border-b border-slate-400 p-4">
+          {!isSignedIn && (
+            <div className="flex justify-center">
+              <SignInButton />
+            </div>
+          )}
+          {isSignedIn && <CreatePostWizard />}
+        </div>
 
         <Feed />
       </PageLayout>
