@@ -1,7 +1,6 @@
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
-import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 
-import Image from "next/image";
 import type { NextPage } from "next";
 import { PageLayout } from "~/components/layout";
 import { PostView } from "~/components/PostView";
@@ -35,13 +34,13 @@ const CreatePostWizard = () => {
 
   return (
     <div className="flex w-full gap-3">
-      <SignOutButton />
-      <Image
-        src={user.profileImageUrl}
-        alt="Profile image"
-        width={56}
-        height={56}
-        className="rounded-full"
+      <UserButton
+        appearance={{
+          elements: {
+            avatarBox: "w-14 h-14",
+          },
+        }}
+        afterSignOutUrl="/"
       />
       <input
         type="text"
